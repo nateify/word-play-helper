@@ -89,9 +89,12 @@ main {
 /* Letter grid */
 .letter-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, 60px);
+    gap: 16px;
     margin-bottom: 30px;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
 }
 
 .letter-input {
@@ -295,6 +298,12 @@ footer {
     .grid-container,
     .results-container {
         padding: 20px;
+    }
+
+    .letter-grid {
+        grid-template-columns: repeat(4, 50px);
+        gap: 12px;
+        padding: 6px;
     }
 
     .letter-input {

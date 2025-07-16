@@ -1,23 +1,23 @@
 # Word Play Helper
 
-Assistant and solver for the game "Word Play" by Game Maker's Toolkit.
+Assistant and solver for the game ["Word Play"](https://store.steampowered.com/app/3586660/Word_Play/) by Game Maker's Toolkit.
 
-## Disclaimer
+**Disclaimer**: This project is not affiliated nor endorsed by Game Maker's Toolkit! This is just a personal project for fun.
 
-This project is not affiliated with Game Maker's Toolkit!
+## Features
 
-## Current Fetures
+-   Input your current letter grid.
+-   Find all possible words with your current letters, sorted by length.
 
-- Input your current letter grid.
-- Find all possible words with your current letters, sorted by length.
-
-## Future Features
+### Future Features
 
 -   Trie for efficient word lookup (sorting by alphabetical).
+    -   Ideally built offline
 -   Constraints on prefixes, suffixes, infixes.
 -   Optimizer/solver (instead of just assistant/helper).
-    -   Part 1: full-on optimizer by including score per tile and bonus scores.
+    -   Part 1: including score per tile and bonus scores for length.
     -   Part 2: include calculation using perks and such.
+-   Have an idea for a new feature? Open an issue!
 
 ## Development
 
