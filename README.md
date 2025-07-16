@@ -11,6 +11,7 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 ### Future Features
 
+-   Implement the 3 bonus tile slots.
 -   Trie for efficient word lookup (sorting by alphabetical).
     -   Ideally built offline
     -   Would be very cool if the results updated as you type.
