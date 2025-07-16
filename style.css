@@ -88,13 +88,68 @@ main {
 
 /* Letter grid */
 .letter-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 60px);
+    display: flex;
+    flex-direction: column;
     gap: 16px;
     margin-bottom: 30px;
     padding: 8px;
     justify-content: center;
     align-items: center;
+}
+
+/* Extra slots control */
+.extra-slots-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.extra-slots-control label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.extra-slots-select {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: var(--surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.extra-slots-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.extra-slots-select:hover {
+    border-color: var(--primary-hover);
+}
+
+/* Modified letter grid to handle both main grid and extra slots */
+
+.main-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    gap: 16px;
+}
+
+.extra-slots {
+    display: grid;
+    gap: 16px;
+    justify-content: center;
+    grid-template-columns: repeat(var(--extra-slots-count, 0), 60px);
+}
+
+.extra-slots.hidden {
+    display: none;
 }
 
 .letter-input {
