@@ -75,6 +75,10 @@ class WordPlayHelper {
                     newIndex = index - 1;
                 }
                 break;
+            case "Enter":
+                e.preventDefault();
+                this.findWords();
+                return;
             default:
                 return;
         }
@@ -229,7 +233,7 @@ class WordPlayHelper {
         setTimeout(() => {
             try {
                 const foundWords = this.wordList.filter((word) => {
-                    return word.length >= 2 && this.canFormWord(word, letters);
+                    return word.length >= 4 && this.canFormWord(word, letters);
                 });
 
                 // Sort by length (descending) then alphabetically

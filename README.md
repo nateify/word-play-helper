@@ -13,6 +13,7 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 -   Trie for efficient word lookup (sorting by alphabetical).
     -   Ideally built offline
+    -   Would be very cool if the results updated as you type.
 -   Constraints on prefixes, suffixes, infixes.
 -   Optimizer/solver (instead of just assistant/helper).
     -   Part 1: including score per tile and bonus scores for length.
