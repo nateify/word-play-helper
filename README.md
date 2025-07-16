@@ -6,7 +6,7 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 ## Features
 
--   Input your current letter grid.
+-   Input your current letter grid (including bonus tiles).
 -   Find all possible words with your current letters, ordered by length.
 -   Filter results by prefix, suffix, infix.
 

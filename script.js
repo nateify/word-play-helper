@@ -16,25 +16,32 @@ class WordPlayHelper {
         const gridContainer = document.getElementById("letterGrid");
         gridContainer.innerHTML = ''; // Clear existing content
         
-        // Create main 4x4 grid container
+        // Create 5x4 grid container
         const mainGrid = document.createElement("div");
-        mainGrid.className = "main-grid";
-        mainGrid.id = "mainGrid";
+        mainGrid.className = "letter-grid-5x4";
+        mainGrid.id = "letterGrid5x4";
         
-        // Create 4x4 grid of input fields
-        for (let i = 0; i < 16; i++) {
+        // Create 5x4 grid (20 inputs total) with left-to-right, top-to-bottom indexing
+        // Row 0: indices 0-4 (0=extra, 1-4=main)
+        // Row 1: indices 5-9 (5=extra, 6-9=main)
+        // Row 2: indices 10-14 (10=extra, 11-14=main)
+        // Row 3: indices 15-19 (15=extra, 16-19=main)
+        for (let i = 0; i < 20; i++) {
             const input = this.createLetterInput(i);
+            
+            // Determine if this is an extra slot (first column of each row)
+            const isExtraSlot = i % 5 === 0;
+            
+            if (isExtraSlot) {
+                input.classList.add("extra-slot");
+            } else {
+                input.classList.add("main-slot");
+            }
+            
             mainGrid.appendChild(input);
         }
         
         gridContainer.appendChild(mainGrid);
-        
-        // Create extra slots container
-        const extraSlotsContainer = document.createElement("div");
-        extraSlotsContainer.className = "extra-slots hidden";
-        extraSlotsContainer.id = "extraSlotsContainer";
-        
-        gridContainer.appendChild(extraSlotsContainer);
         
         // Initialize with current extra slots count
         this.updateExtraSlots();
@@ -62,21 +69,33 @@ class WordPlayHelper {
     }
     
     updateExtraSlots() {
-        const extraSlotsContainer = document.getElementById("extraSlotsContainer");
-        extraSlotsContainer.innerHTML = ''; // Clear existing extra slots
+        const gridContainer = document.getElementById("letterGrid5x4");
         
-        if (this.extraSlots === 0) {
-            extraSlotsContainer.classList.add("hidden");
-            return;
+        // Show/hide inputs in the first column based on extra slots count
+        // Extra slot indices: 0, 5, 10, 15 (first column of each row)
+        const extraSlotIndices = [0, 5, 10, 15];
+        
+        for (let i = 0; i < 4; i++) {
+            const input = document.querySelector(`[data-index="${extraSlotIndices[i]}"]`);
+            if (input) {
+                if (i < this.extraSlots) {
+                    input.style.display = 'block';
+                    input.style.visibility = 'visible';
+                } else {
+                    input.style.display = 'none';
+                    input.style.visibility = 'hidden';
+                    input.value = ''; // Clear value when hiding
+                }
+            }
         }
         
-        extraSlotsContainer.classList.remove("hidden");
-        extraSlotsContainer.style.setProperty('--extra-slots-count', this.extraSlots);
-        
-        // Create extra slot inputs
-        for (let i = 0; i < this.extraSlots; i++) {
-            const input = this.createLetterInput(16 + i); // Continue indexing from 16
-            extraSlotsContainer.appendChild(input);
+        // Update grid layout class based on extra slots
+        if (this.extraSlots === 0) {
+            gridContainer.classList.add('no-extra-slots');
+            gridContainer.classList.remove('has-extra-slots');
+        } else {
+            gridContainer.classList.add('has-extra-slots');
+            gridContainer.classList.remove('no-extra-slots');
         }
     }
 
@@ -85,99 +104,72 @@ class WordPlayHelper {
     handleLetterInput(e) {
         const index = parseInt(e.target.dataset.index);
         const value = e.target.value;
-        const totalInputs = 16 + this.extraSlots;
+        const totalInputs = 20;
 
         // Auto-advance to next input if letter is entered
         if (value && index < totalInputs - 1) {
-            const nextInput = document.querySelector(
-                `[data-index="${index + 1}"]`
-            );
-            if (nextInput) {
-                nextInput.focus();
+            let nextIndex = index + 1;
+            
+            // Find the next visible input
+            while (nextIndex < totalInputs) {
+                const nextInput = document.querySelector(`[data-index="${nextIndex}"]`);
+                if (nextInput && nextInput.style.display !== 'none') {
+                    nextInput.focus();
+                    break;
+                }
+                nextIndex++;
             }
         }
     }
 
     handleKeyNavigation(e) {
         const index = parseInt(e.target.dataset.index);
-        const totalInputs = 16 + this.extraSlots;
+        const totalInputs = 20;
         let newIndex = index;
 
-        // Handle navigation within the main 4x4 grid
-        if (index < 16) {
-            const row = Math.floor(index / 4);
-            const col = index % 4;
+        // Calculate current row and column
+        const row = Math.floor(index / 5);
+        const col = index % 5;
 
-            switch (e.key) {
-                case "ArrowUp":
-                    if (row > 0) newIndex = index - 4;
-                    break;
-                case "ArrowDown":
-                    if (row < 3) {
-                        newIndex = index + 4;
-                    } else if (this.extraSlots > 0) {
-                        // Move to extra slots if at bottom row
-                        const extraSlotIndex = Math.min(col, this.extraSlots - 1);
-                        newIndex = 16 + extraSlotIndex;
-                    }
-                    break;
-                case "ArrowLeft":
-                    if (col > 0) newIndex = index - 1;
-                    break;
-                case "ArrowRight":
-                    if (col < 3) newIndex = index + 1;
-                    break;
-                case "Backspace":
-                    if (!e.target.value && index > 0) {
-                        newIndex = index - 1;
-                    }
-                    break;
-                case "Enter":
-                    e.preventDefault();
-                    this.findWords();
-                    return;
-                default:
-                    return;
-            }
-        } else {
-            // Handle navigation within extra slots
-            const extraSlotIndex = index - 16;
-            
-            switch (e.key) {
-                case "ArrowUp":
-                    // Move to bottom row of main grid
-                    const mainGridIndex = Math.min(extraSlotIndex, 3) + 12; // Bottom row (12-15)
-                    newIndex = mainGridIndex;
-                    break;
-                case "ArrowDown":
-                    // Stay in extra slots, no movement
-                    break;
-                case "ArrowLeft":
-                    if (extraSlotIndex > 0) newIndex = index - 1;
-                    break;
-                case "ArrowRight":
-                    if (extraSlotIndex < this.extraSlots - 1) newIndex = index + 1;
-                    break;
-                case "Backspace":
-                    if (!e.target.value && index > 0) {
-                        newIndex = index - 1;
-                    }
-                    break;
-                case "Enter":
-                    e.preventDefault();
-                    this.findWords();
-                    return;
-                default:
-                    return;
-            }
+        switch (e.key) {
+            case "ArrowUp":
+                if (row > 0) {
+                    newIndex = index - 5;
+                }
+                break;
+            case "ArrowDown":
+                if (row < 3) {
+                    newIndex = index + 5;
+                }
+                break;
+            case "ArrowLeft":
+                if (col > 0) {
+                    newIndex = index - 1;
+                }
+                break;
+            case "ArrowRight":
+                if (col < 4) {
+                    newIndex = index + 1;
+                }
+                break;
+            case "Backspace":
+                if (!e.target.value && index > 0) {
+                    newIndex = index - 1;
+                }
+                break;
+            case "Enter":
+                e.preventDefault();
+                this.findWords();
+                return;
+            default:
+                return;
         }
 
+        // Ensure the target input is visible (not hidden by extra slots setting)
         if (newIndex !== index && newIndex >= 0 && newIndex < totalInputs) {
-            e.preventDefault();
-            const targetInput = document.querySelector(
-                `[data-index="${newIndex}"]`
-            );
-            if (targetInput) {
+            const targetInput = document.querySelector(`[data-index="${newIndex}"]`);
+            if (targetInput && targetInput.style.display !== 'none') {
+                e.preventDefault();
                 targetInput.focus();
             }
         }
@@ -284,8 +276,17 @@ class WordPlayHelper {
         const inputs = document.querySelectorAll(".letter-input");
         inputs.forEach((input) => (input.value = ""));
         
-        // Focus on the first input in the main grid
-        const firstInput = document.querySelector('[data-index="0"]');
+        // Focus on the first visible input
+        // With the new indexing, find the first input that's not hidden
+        let firstInput = null;
+        for (let i = 0; i < 20; i++) {
+            const input = document.querySelector(`[data-index="${i}"]`);
+            if (input && input.style.display !== 'none') {
+                firstInput = input;
+                break;
+            }
+        }
+        
         if (firstInput) {
             firstInput.focus();
         }
