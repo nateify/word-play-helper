@@ -2,15 +2,13 @@ class WordPlayHelper {
     constructor() {
         this.wordList = [];
         this.letterGrid = [];
-        this.positionConstraints = [];
         this.isLoading = false;
-        this.constraintsCollapsed = true; // Start collapsed by default
+        this.currentResults = []; // Store current unfiltered results
+        this.currentLetters = []; // Store current letters used
 
         this.initializeGrid();
-        this.initializeConstraints();
         this.attachEventListeners();
         this.loadWordList();
-        this.initializeConstraintsCollapse();
     }
 
     initializeGrid() {
@@ -39,43 +37,7 @@ class WordPlayHelper {
         }
     }
 
-    initializeConstraints() {
-        const constraintsContainer = document.getElementById(
-            "positionConstraints"
-        );
 
-        // Create constraint inputs for positions 1-12 (reasonable word length limit)
-        for (let i = 1; i <= 12; i++) {
-            const constraintItem = document.createElement("div");
-            constraintItem.className = "constraint-item";
-
-            const label = document.createElement("span");
-            label.className = "constraint-label";
-            label.textContent = i.toString();
-
-            const input = document.createElement("input");
-            input.type = "text";
-            input.className = "constraint-input";
-            input.maxLength = 1;
-            input.dataset.position = i;
-            input.placeholder = "";
-
-            // Add input event listener
-            input.addEventListener("input", (e) => {
-                e.target.value = e.target.value.toUpperCase();
-                this.handleConstraintInput(e);
-            });
-
-            // Add keyboard navigation
-            input.addEventListener("keydown", (e) => {
-                this.handleConstraintKeyNavigation(e);
-            });
-
-            constraintItem.appendChild(label);
-            constraintItem.appendChild(input);
-            constraintsContainer.appendChild(constraintItem);
-        }
-    }
 
     handleLetterInput(e) {
         const index = parseInt(e.target.dataset.index);
@@ -136,80 +98,13 @@ class WordPlayHelper {
         }
     }
 
-    handleConstraintInput(e) {
-        const position = parseInt(e.target.dataset.position);
-        const letter = e.target.value.toUpperCase();
 
-        // Update position constraints array
-        this.positionConstraints[position] = letter;
 
-        // Update visual state
-        if (letter) {
-            e.target.classList.add("active");
-        } else {
-            e.target.classList.remove("active");
-        }
-    }
 
-    initializeConstraintsCollapse() {
-        const toggle = document.getElementById("constraintsToggle");
-        const content = document.getElementById("constraintsContent");
 
-        if (this.constraintsCollapsed) {
-            toggle.classList.add("collapsed");
-            content.classList.add("collapsed");
-        }
-    }
 
-    toggleConstraints() {
-        const toggle = document.getElementById("constraintsToggle");
-        const content = document.getElementById("constraintsContent");
 
-        this.constraintsCollapsed = !this.constraintsCollapsed;
 
-        if (this.constraintsCollapsed) {
-            toggle.classList.add("collapsed");
-            content.classList.add("collapsed");
-        } else {
-            toggle.classList.remove("collapsed");
-            content.classList.remove("collapsed");
-        }
-    }
-
-    handleConstraintKeyNavigation(e) {
-        const position = parseInt(e.target.dataset.position);
-        let newPosition = position;
-
-        switch (e.key) {
-            case "ArrowLeft":
-                if (position > 1) newPosition = position - 1;
-                break;
-            case "ArrowRight":
-                if (position < 12) newPosition = position + 1;
-                break;
-            case "Backspace":
-                if (!e.target.value && position > 1) {
-                    newPosition = position - 1;
-                }
-                break;
-            case "Enter":
-                e.preventDefault();
-                this.findWords();
-                return;
-            default:
-                return;
-        }
-
-        if (newPosition !== position) {
-            e.preventDefault();
-            const targetInput = document.querySelector(
-                `[data-position="${newPosition}"]`
-            );
-            if (targetInput) {
-                targetInput.focus();
-            }
-        }
-    }
 
     attachEventListeners() {
         document.getElementById("findWords").addEventListener("click", () => {
@@ -220,16 +115,34 @@ class WordPlayHelper {
             this.clearGrid();
         });
 
+
+
+        // Filter event listeners
         document
-            .getElementById("clearConstraints")
-            .addEventListener("click", () => {
-                this.clearConstraints();
+            .getElementById("startsWithFilter")
+            .addEventListener("input", (e) => {
+                e.target.value = e.target.value.toUpperCase();
+                this.applyFilters();
             });
 
         document
-            .getElementById("constraintsToggle")
+            .getElementById("endsWithFilter")
+            .addEventListener("input", (e) => {
+                e.target.value = e.target.value.toUpperCase();
+                this.applyFilters();
+            });
+
+        document
+            .getElementById("containsFilter")
+            .addEventListener("input", (e) => {
+                e.target.value = e.target.value.toUpperCase();
+                this.applyFilters();
+            });
+
+        document
+            .getElementById("clearFilters")
             .addEventListener("click", () => {
-                this.toggleConstraints();
+                this.clearFilters();
             });
     }
 
@@ -283,24 +196,26 @@ class WordPlayHelper {
         inputs.forEach((input) => (input.value = ""));
         inputs[0].focus();
         this.clearResults();
-        this.clearConstraints(); // Also clear constraints when clearing the grid
     }
 
-    clearConstraints() {
-        const constraints = document.querySelectorAll(".constraint-input");
-        constraints.forEach((input) => {
-            input.value = "";
-            input.classList.remove("active");
-        });
-        this.positionConstraints = []; // Clear the array
-    }
+
 
     clearResults() {
         const wordList = document.getElementById("wordList");
-        const stats = document.getElementById("stats");
+        const filtersSection = document.getElementById("filtersSection");
+        const foundWordsHeader = document.getElementById("foundWordsHeader");
+
         wordList.innerHTML =
             '<p class="placeholder">Enter letters and click "Find Words" to see results</p>';
-        stats.innerHTML = "";
+        filtersSection.style.display = "none";
+        foundWordsHeader.innerHTML = "Found Words";
+
+        // Clear stored results
+        this.currentResults = [];
+        this.currentLetters = [];
+
+        // Clear filters
+        this.clearFilters();
     }
 
     showLoading() {
@@ -349,29 +264,96 @@ class WordPlayHelper {
         return true;
     }
 
-    matchesPositionConstraints(word) {
-        // Check if word matches position constraints
-        for (
-            let position = 1;
-            position <= Math.min(word.length, this.positionConstraints.length);
-            position++
-        ) {
-            const constraintLetter = this.positionConstraints[position];
-            if (constraintLetter && word[position - 1] !== constraintLetter) {
-                return false;
+
+
+
+
+    applyFilters() {
+        if (this.currentResults.length === 0) return;
+
+        const startsWithFilter = document
+            .getElementById("startsWithFilter")
+            .value.toUpperCase();
+        const endsWithFilter = document
+            .getElementById("endsWithFilter")
+            .value.toUpperCase();
+        const containsFilter = document
+            .getElementById("containsFilter")
+            .value.toUpperCase();
+
+        let filteredWords = this.currentResults.filter((word) => {
+            let matches = true;
+
+            if (startsWithFilter && !word.startsWith(startsWithFilter)) {
+                matches = false;
             }
-        }
-        return true;
+
+            if (endsWithFilter && !word.endsWith(endsWithFilter)) {
+                matches = false;
+            }
+
+            if (containsFilter && !word.includes(containsFilter)) {
+                matches = false;
+            }
+
+            return matches;
+        });
+
+        this.displayFilteredResults(filteredWords);
     }
 
-    getActiveConstraints() {
-        const activeConstraints = [];
-        for (let i = 1; i < this.positionConstraints.length; i++) {
-            if (this.positionConstraints[i]) {
-                activeConstraints.push(`${i}:${this.positionConstraints[i]}`);
-            }
+    clearFilters() {
+        document.getElementById("startsWithFilter").value = "";
+        document.getElementById("endsWithFilter").value = "";
+        document.getElementById("containsFilter").value = "";
+
+        if (this.currentResults.length > 0) {
+            this.displayFilteredResults(this.currentResults);
         }
-        return activeConstraints;
+    }
+
+    displayFilteredResults(words) {
+        const wordList = document.getElementById("wordList");
+
+        if (words.length === 0) {
+            wordList.innerHTML =
+                '<p class="placeholder">No words match the current filters.</p>';
+            return;
+        }
+
+        // Group words by length
+        const wordsByLength = {};
+        words.forEach((word) => {
+            const length = word.length;
+            if (!wordsByLength[length]) {
+                wordsByLength[length] = [];
+            }
+            wordsByLength[length].push(word);
+        });
+
+        // Display words grouped by length
+        let html = "";
+        const lengths = Object.keys(wordsByLength)
+            .map(Number)
+            .sort((a, b) => b - a);
+
+        lengths.forEach((length) => {
+            const wordsForLength = wordsByLength[length];
+            html += `
+                <div class="word-group">
+                    <h3>${length} letters <span class="word-count">${
+                wordsForLength.length
+            }</span></h3>
+                    <div class="words">
+                        ${wordsForLength
+                            .map((word) => `<div class="word">${word}</div>`)
+                            .join("")}
+                    </div>
+                </div>
+            `;
+        });
+
+        wordList.innerHTML = html;
     }
 
     async findWords() {
@@ -399,8 +381,7 @@ class WordPlayHelper {
                 const foundWords = this.wordList.filter((word) => {
                     return (
                         word.length >= 4 &&
-                        this.canFormWord(word, letters) &&
-                        this.matchesPositionConstraints(word)
+                        this.canFormWord(word, letters)
                     );
                 });
 
@@ -424,76 +405,30 @@ class WordPlayHelper {
 
     displayResults(words, letters) {
         const wordList = document.getElementById("wordList");
-        const stats = document.getElementById("stats");
+        const filtersSection = document.getElementById("filtersSection");
+        const foundWordsHeader = document.getElementById("foundWordsHeader");
+
+        // Store current results for filtering
+        this.currentResults = words;
+        this.currentLetters = letters;
 
         if (words.length === 0) {
             wordList.innerHTML =
                 '<p class="placeholder">No words found with these letters.</p>';
-            stats.innerHTML = "";
+            filtersSection.style.display = "none";
+            foundWordsHeader.innerHTML = "Found Words";
             return;
         }
 
-        // Group words by length
-        const wordsByLength = {};
-        words.forEach((word) => {
-            const length = word.length;
-            if (!wordsByLength[length]) {
-                wordsByLength[length] = [];
-            }
-            wordsByLength[length].push(word);
-        });
+        // Show filters section when there are results
+        filtersSection.style.display = "block";
 
-        // Display stats
+        // Update header with word count chip
         const totalWords = words.length;
-        const longestWord = words[0];
-        const lettersUsed = letters.join("");
-        const activeConstraints = this.getActiveConstraints();
+        foundWordsHeader.innerHTML = `Found Words <span class="word-count">${totalWords}</span>`;
 
-        let statsHtml = `
-            <p>Found <strong>${totalWords}</strong> words using letters: <strong>${lettersUsed}</strong></p>
-            <p>Longest word: <strong>${longestWord}</strong> (${longestWord.length} letters)</p>
-        `;
-
-        if (activeConstraints.length > 0) {
-            statsHtml += `<p>Position constraints: <strong>${activeConstraints.join(
-                ", "
-            )}</strong></p>`;
-        }
-
-        stats.innerHTML = statsHtml;
-
-        // Display words grouped by length
-        let html = "";
-        const lengths = Object.keys(wordsByLength)
-            .map(Number)
-            .sort((a, b) => b - a);
-
-        lengths.forEach((length) => {
-            const wordsForLength = wordsByLength[length];
-            html += `
-                <div class="word-group">
-                    <h3>${length} letters <span class="word-count">${
-                wordsForLength.length
-            }</span></h3>
-                    <div class="words">
-                        ${wordsForLength
-                            .map((word) => `<div class="word">${word}</div>`)
-                            .join("")}
-                    </div>
-                </div>
-            `;
-        });
-
-        wordList.innerHTML = html;
-    }
-
-    clearConstraints() {
-        const constraints = document.querySelectorAll(".constraint-input");
-        constraints.forEach((input) => {
-            input.value = "";
-            input.classList.remove("active");
-        });
-        this.positionConstraints = []; // Clear the array
+        // Display the words using the filtered results method
+        this.displayFilteredResults(words);
     }
 }
 

@@ -7,18 +7,19 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 ## Features
 
 -   Input your current letter grid.
--   Find all possible words with your current letters, sorted by length.
+-   Find all possible words with your current letters, ordered by length.
+-   Filter results by prefix, suffix, infix.
 
 ### Future Features
 
 -   Fix: prevent space or other non-tile symbols from being written.
+-   Add "last updated" timestamp for when word list was last updated.
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
 -   Allow for wildcard tiles.
 -   Implement the 3 bonus tile slots.
 -   Trie for efficient word lookup (sorting by alphabetical).
     -   Ideally built offline
     -   Would be very cool if the results updated as you type.
--   Constraints on prefixes, suffixes, infixes.
 -   Optimizer/solver (instead of just assistant/helper).
     -   Part 1: including score per tile and bonus scores for length.
     -   Part 2: include calculation using perks and such.
