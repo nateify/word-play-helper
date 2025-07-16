@@ -11,6 +11,9 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 ### Future Features
 
+-   Fix: prevent space or other non-tile symbols from being written.
+-   Allow for multi-letter tiles (`ing`, `qu`, etc.).
+-   Allow for wildcard tiles.
 -   Implement the 3 bonus tile slots.
 -   Trie for efficient word lookup (sorting by alphabetical).
     -   Ideally built offline
@@ -27,20 +30,35 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 Just a vanilla HTML/CSS/JS project. Locally you can use any simple server (i.e VSCode's Live Preview). It can be hosted on github pages or similar services.
 
-### Compressing the word list
+-   `index.html` is the main file.
+-   `script.js` is the main (client-side) script.
+-   `style.css` is the main stylesheet.
+-   `data/compress.ts` is the script that compresses the word list.
+
+### Building
+
+#### Installing dependencies
+
+- Requirement: Node.js V22.6.0 or newer
+
+```bash
+npm install
+```
+
+#### Compressing the word list
 
 The raw word list is 2MB, so we compress it using gzip for use in the browser.
 
 1. Extract the word list from the game
 
-2. Save to the data folder
+2. Save to the `data` folder
 
 3. Compress the word list by running:
 
 ```bash
-node data/compress.js
+npm run build
 ```
 
-### Contributing
+## Contributing
 
 This is still very much a prototype, and I'm not sure what direction to take it. But if you have any ideas, feel free to leave an issue or a PR!

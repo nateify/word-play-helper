@@ -1,0 +1,23 @@
+{
+    "name": "word-play-helper",
+    "version": "1.0.0",
+    "description": "Assistant & solver for the game \"Word Play\" by Game Maker's Toolkit",
+    "homepage": "https://github.com/Nyveon/word-play-helper#readme",
+    "bugs": {
+        "url": "https://github.com/Nyveon/word-play-helper/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Nyveon/word-play-helper.git"
+    },
+    "license": "GPL-3.0",
+    "author": "Nyveon",
+    "type": "module",
+    "main": "script.js",
+    "scripts": {
+        "build": "node data/compress.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^24.0.14"
+    }
+}
