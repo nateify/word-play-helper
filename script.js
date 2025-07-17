@@ -533,8 +533,8 @@ class WordPlayHelper {
         const totalWords = words.length;
         foundWordsHeader.innerHTML = `Found Words <span class="word-count">${totalWords}</span>`;
 
-        // Display the words using the filtered results method
-        this.displayFilteredResults(words);
+        // Apply existing filters if any, otherwise display all results
+        this.applyFilters();
     }
 }
 
