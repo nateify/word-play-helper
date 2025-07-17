@@ -56,7 +56,8 @@ class WordPlayHelper {
 
         // Add input event listener for auto-advance
         input.addEventListener("input", (e) => {
-            e.target.value = e.target.value.toUpperCase();
+            // Filter to only allow A-Z letters
+            e.target.value = e.target.value.replace(/[^A-Za-z]/g, '').toUpperCase();
             this.handleLetterInput(e);
         });
 
@@ -154,7 +155,16 @@ class WordPlayHelper {
                 break;
             case "Backspace":
                 if (!e.target.value && index > 0) {
-                    newIndex = index - 1;
+                    // Find the previous visible input
+                    let prevIndex = index - 1;
+                    while (prevIndex >= 0) {
+                        const prevInput = document.querySelector(`[data-index="${prevIndex}"]`);
+                        if (prevInput && prevInput.style.display !== 'none') {
+                            newIndex = prevIndex;
+                            break;
+                        }
+                        prevIndex--;
+                    }
                 }
                 break;
             case "Enter":
