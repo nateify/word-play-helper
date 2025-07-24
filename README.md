@@ -6,7 +6,7 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 ## Features
 
--   Input your current letter grid (including bonus tiles).
+-   Input your current letter grid (including bonus tiles). A-Z and wildcards (`*`) are supported.
 -   Find all possible words with your current letters, ordered by length.
 -   Filter results by prefix, suffix, infix.
 
@@ -16,6 +16,7 @@ Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 -   Unit tests
 -   Dark mode
+-   Keyboard shortcuts
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
 -   Automatically remove tiles corresponding to selected word?
 -   Trie for efficient word lookup (sorting by alphabetical).
