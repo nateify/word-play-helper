@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { gzipSync } from "zlib";
 import { join } from "path";
 
-async function compressWordList() {
+export async function compressWordList() {
     try {
         console.log("Reading word list...");
         const inputFile = join("data", "wordsfull.txt");
@@ -28,5 +28,3 @@ async function compressWordList() {
         process.exit(1);
     }
 }
-
-compressWordList();

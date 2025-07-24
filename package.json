@@ -15,8 +15,7 @@
     "type": "module",
     "main": "script.js",
     "scripts": {
-        "update-html-timestamp": "node scripts/update-timestamp.js",
-        "build": "node scripts/compress.ts"
+        "build": "node scripts/build.ts"
     },
     "devDependencies": {
         "@types/node": "^24.0.14"
