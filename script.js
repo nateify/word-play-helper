@@ -240,7 +240,7 @@ class WordPlayHelper {
     async loadWordList() {
         try {
             // Load compressed word list
-            const response = await fetch("data/wordsfullb.txt.gz");
+            const response = await fetch("data/wordsfull.txt.gz");
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

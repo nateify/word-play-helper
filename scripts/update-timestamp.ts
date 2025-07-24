@@ -4,7 +4,7 @@ import { execSync } from "child_process";
 
 function updateTimestamp() {
     const htmlFilePath = join(process.cwd(), "index.html");
-    const wordlistFilePath = join(process.cwd(), "data", "wordsfullb.txt.gz");
+    const wordlistFilePath = join(process.cwd(), "data", "wordsfull.txt.gz");
 
     try {
         // Execute git command to get the last commit date for the specific file

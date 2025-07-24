@@ -7,8 +7,8 @@ import { join } from "path";
 async function compressWordList() {
     try {
         console.log("Reading word list...");
-        const inputFile = join("data", "wordsfullb.txt");
-        const outputFile = join("data", "wordsfullb.txt.gz");
+        const inputFile = join("data", "wordsfull.txt");
+        const outputFile = join("data", "wordsfull.txt.gz");
         const originalData = readFileSync(inputFile, "utf8");
         console.log(`Original file size: ${originalData.length} bytes`);
 
