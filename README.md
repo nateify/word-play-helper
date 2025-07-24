@@ -36,7 +36,8 @@ Just a vanilla HTML/CSS/JS project. Locally you can use any simple server (i.e V
 -   `index.html` is the main file.
 -   `script.js` is the main (client-side) script.
 -   `style.css` is the main stylesheet.
--   `data/compress.ts` is the script that compresses the word list.
+-   `scripts/compress.ts` is the script that compresses the word list.
+-   `scripts/update-timestamp.ts` is the script that updates the timestamp in the page footer.
 
 ### Building
 
