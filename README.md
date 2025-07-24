@@ -1,6 +1,6 @@
 # Word Play Helper
 
-Assistant and solver for the game ["Word Play"](https://store.steampowered.com/app/3586660/Word_Play/) by Game Maker's Toolkit.
+Assistant and solver for the game ["Word Play"](https://store.steampowered.com/app/3586660/Word_Play/) by Game Maker's Toolkit. Steam guide [here](https://steamcommunity.com/sharedfiles/filedetails/?id=3527537715).
 
 **Disclaimer**: This project is not affiliated nor endorsed by Game Maker's Toolkit! This is just a personal project for fun.
 
@@ -14,6 +14,8 @@ Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 ### Future Features
 
+-   Unit tests
+-   Dark mode
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
 -   Allow for wildcard tiles.
 -   Automatically remove tiles corresponding to selected word?

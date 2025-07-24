@@ -14,13 +14,13 @@ class WordPlayHelper {
 
     initializeGrid() {
         const gridContainer = document.getElementById("letterGrid");
-        gridContainer.innerHTML = ''; // Clear existing content
-        
+        gridContainer.innerHTML = ""; // Clear existing content
+
         // Create 5x4 grid container
         const mainGrid = document.createElement("div");
         mainGrid.className = "letter-grid-5x4";
         mainGrid.id = "letterGrid5x4";
-        
+
         // Create 5x4 grid (20 inputs total) with left-to-right, top-to-bottom indexing
         // Row 0: indices 0-4 (0=extra, 1-4=main)
         // Row 1: indices 5-9 (5=extra, 6-9=main)
@@ -28,25 +28,25 @@ class WordPlayHelper {
         // Row 3: indices 15-19 (15=extra, 16-19=main)
         for (let i = 0; i < 20; i++) {
             const input = this.createLetterInput(i);
-            
+
             // Determine if this is an extra slot (first column of each row)
             const isExtraSlot = i % 5 === 0;
-            
+
             if (isExtraSlot) {
                 input.classList.add("extra-slot");
             } else {
                 input.classList.add("main-slot");
             }
-            
+
             mainGrid.appendChild(input);
         }
-        
+
         gridContainer.appendChild(mainGrid);
-        
+
         // Initialize with current extra slots count
         this.updateExtraSlots();
     }
-    
+
     createLetterInput(index) {
         const input = document.createElement("input");
         input.type = "text";
@@ -57,7 +57,9 @@ class WordPlayHelper {
         // Add input event listener for auto-advance
         input.addEventListener("input", (e) => {
             // Filter to only allow A-Z letters
-            e.target.value = e.target.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+            e.target.value = e.target.value
+                .replace(/[^A-Za-z]/g, "")
+                .toUpperCase();
             this.handleLetterInput(e);
         });
 
@@ -65,42 +67,42 @@ class WordPlayHelper {
         input.addEventListener("keydown", (e) => {
             this.handleKeyNavigation(e);
         });
-        
+
         return input;
     }
-    
+
     updateExtraSlots() {
         const gridContainer = document.getElementById("letterGrid5x4");
-        
+
         // Show/hide inputs in the first column based on extra slots count
         // Extra slot indices: 0, 5, 10, 15 (first column of each row)
         const extraSlotIndices = [0, 5, 10, 15];
-        
+
         for (let i = 0; i < 4; i++) {
-            const input = document.querySelector(`[data-index="${extraSlotIndices[i]}"]`);
+            const input = document.querySelector(
+                `[data-index="${extraSlotIndices[i]}"]`
+            );
             if (input) {
                 if (i < this.extraSlots) {
-                    input.style.display = 'block';
-                    input.style.visibility = 'visible';
+                    input.style.display = "block";
+                    input.style.visibility = "visible";
                 } else {
-                    input.style.display = 'none';
-                    input.style.visibility = 'hidden';
-                    input.value = ''; // Clear value when hiding
+                    input.style.display = "none";
+                    input.style.visibility = "hidden";
+                    input.value = ""; // Clear value when hiding
                 }
             }
         }
-        
+
         // Update grid layout class based on extra slots
         if (this.extraSlots === 0) {
-            gridContainer.classList.add('no-extra-slots');
-            gridContainer.classList.remove('has-extra-slots');
+            gridContainer.classList.add("no-extra-slots");
+            gridContainer.classList.remove("has-extra-slots");
         } else {
-            gridContainer.classList.add('has-extra-slots');
-            gridContainer.classList.remove('no-extra-slots');
+            gridContainer.classList.add("has-extra-slots");
+            gridContainer.classList.remove("no-extra-slots");
         }
     }
-
-
 
     handleLetterInput(e) {
         const index = parseInt(e.target.dataset.index);
@@ -110,11 +112,13 @@ class WordPlayHelper {
         // Auto-advance to next input if letter is entered
         if (value && index < totalInputs - 1) {
             let nextIndex = index + 1;
-            
+
             // Find the next visible input
             while (nextIndex < totalInputs) {
-                const nextInput = document.querySelector(`[data-index="${nextIndex}"]`);
-                if (nextInput && nextInput.style.display !== 'none') {
+                const nextInput = document.querySelector(
+                    `[data-index="${nextIndex}"]`
+                );
+                if (nextInput && nextInput.style.display !== "none") {
                     nextInput.focus();
                     break;
                 }
@@ -158,8 +162,10 @@ class WordPlayHelper {
                     // Find the previous visible input
                     let prevIndex = index - 1;
                     while (prevIndex >= 0) {
-                        const prevInput = document.querySelector(`[data-index="${prevIndex}"]`);
-                        if (prevInput && prevInput.style.display !== 'none') {
+                        const prevInput = document.querySelector(
+                            `[data-index="${prevIndex}"]`
+                        );
+                        if (prevInput && prevInput.style.display !== "none") {
                             newIndex = prevIndex;
                             break;
                         }
@@ -177,21 +183,15 @@ class WordPlayHelper {
 
         // Ensure the target input is visible (not hidden by extra slots setting)
         if (newIndex !== index && newIndex >= 0 && newIndex < totalInputs) {
-            const targetInput = document.querySelector(`[data-index="${newIndex}"]`);
-            if (targetInput && targetInput.style.display !== 'none') {
+            const targetInput = document.querySelector(
+                `[data-index="${newIndex}"]`
+            );
+            if (targetInput && targetInput.style.display !== "none") {
                 e.preventDefault();
                 targetInput.focus();
             }
         }
     }
-
-
-
-
-
-
-
-
 
     attachEventListeners() {
         document.getElementById("findWords").addEventListener("click", () => {
@@ -203,10 +203,12 @@ class WordPlayHelper {
         });
 
         // Extra slots dropdown listener
-        document.getElementById("extraSlots").addEventListener("change", (e) => {
-            this.extraSlots = parseInt(e.target.value);
-            this.updateExtraSlots();
-        });
+        document
+            .getElementById("extraSlots")
+            .addEventListener("change", (e) => {
+                this.extraSlots = parseInt(e.target.value);
+                this.updateExtraSlots();
+            });
 
         // Filter event listeners
         document
@@ -285,26 +287,24 @@ class WordPlayHelper {
     clearGrid() {
         const inputs = document.querySelectorAll(".letter-input");
         inputs.forEach((input) => (input.value = ""));
-        
+
         // Focus on the first visible input
         // With the new indexing, find the first input that's not hidden
         let firstInput = null;
         for (let i = 0; i < 20; i++) {
             const input = document.querySelector(`[data-index="${i}"]`);
-            if (input && input.style.display !== 'none') {
+            if (input && input.style.display !== "none") {
                 firstInput = input;
                 break;
             }
         }
-        
+
         if (firstInput) {
             firstInput.focus();
         }
-        
+
         this.clearResults();
     }
-
-
 
     clearResults() {
         const wordList = document.getElementById("wordList");
@@ -369,10 +369,6 @@ class WordPlayHelper {
 
         return true;
     }
-
-
-
-
 
     applyFilters() {
         if (this.currentResults.length === 0) return;
@@ -447,10 +443,12 @@ class WordPlayHelper {
             const wordsForLength = wordsByLength[length];
             html += `
                 <div class="word-group">
-                    <h3>${length} letters <span class="word-count">${
-                wordsForLength.length
-            }</span></h3>
-                    <div class="words">
+                    <h3 class="word-group-header" data-length="${length}" role="button" tabindex="0" aria-expanded="true" aria-controls="words-${length}">
+                        <span class="collapse-icon">▼</span>
+                        ${length} letters 
+                        <span class="word-count">${wordsForLength.length}</span>
+                    </h3>
+                    <div class="words" data-words-for="${length}" id="words-${length}">
                         ${wordsForLength
                             .map((word) => `<div class="word">${word}</div>`)
                             .join("")}
@@ -460,6 +458,47 @@ class WordPlayHelper {
         });
 
         wordList.innerHTML = html;
+
+        // Add click handlers for collapsible headers
+        this.attachCollapseHandlers();
+    }
+
+    attachCollapseHandlers() {
+        const headers = document.querySelectorAll(".word-group-header");
+        headers.forEach((header) => {
+            const toggleCollapse = () => {
+                const length = header.dataset.length;
+                const wordsContainer = document.querySelector(
+                    `[data-words-for="${length}"]`
+                );
+                const icon = header.querySelector(".collapse-icon");
+
+                if (wordsContainer.style.display === "none") {
+                    // Expand
+                    wordsContainer.style.display = "grid";
+                    icon.textContent = "▼";
+                    header.classList.remove("collapsed");
+                    header.setAttribute("aria-expanded", "true");
+                } else {
+                    // Collapse
+                    wordsContainer.style.display = "none";
+                    icon.textContent = "▶";
+                    header.classList.add("collapsed");
+                    header.setAttribute("aria-expanded", "false");
+                }
+            };
+
+            // Mouse click handler
+            header.addEventListener("click", toggleCollapse);
+
+            // Keyboard handler for accessibility
+            header.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleCollapse();
+                }
+            });
+        });
     }
 
     async findWords() {
@@ -485,10 +524,7 @@ class WordPlayHelper {
         setTimeout(() => {
             try {
                 const foundWords = this.wordList.filter((word) => {
-                    return (
-                        word.length >= 4 &&
-                        this.canFormWord(word, letters)
-                    );
+                    return word.length >= 4 && this.canFormWord(word, letters);
                 });
 
                 // Sort by length (descending) then alphabetically
