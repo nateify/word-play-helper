@@ -56,9 +56,9 @@ class WordPlayHelper {
 
         // Add input event listener for auto-advance
         input.addEventListener("input", (e) => {
-            // Filter to only allow A-Z letters
+            // Filter to only allow A-Z letters and asterisks (wildcards)
             e.target.value = e.target.value
-                .replace(/[^A-Za-z]/g, "")
+                .replace(/[^A-Za-z*]/g, "")
                 .toUpperCase();
             this.handleLetterInput(e);
         });
@@ -349,25 +349,37 @@ class WordPlayHelper {
 
     canFormWord(word, availableLetters) {
         const letterCount = {};
+        let wildcardCount = 0;
 
-        // Count available letters
+        // Count available letters and wildcards separately
         for (const letter of availableLetters) {
-            letterCount[letter] = (letterCount[letter] || 0) + 1;
+            if (letter === '*') {
+                wildcardCount++;
+            } else {
+                letterCount[letter] = (letterCount[letter] || 0) + 1;
+            }
         }
 
-        // Check if word can be formed
+        // Count required letters for the word
         const wordLetters = {};
         for (const letter of word) {
             wordLetters[letter] = (wordLetters[letter] || 0) + 1;
         }
 
-        for (const [letter, count] of Object.entries(wordLetters)) {
-            if (!letterCount[letter] || letterCount[letter] < count) {
-                return false;
+        // Check if word can be formed with available letters and wildcards
+        let wildcardsNeeded = 0;
+        
+        for (const [letter, requiredCount] of Object.entries(wordLetters)) {
+            const availableCount = letterCount[letter] || 0;
+            
+            if (availableCount < requiredCount) {
+                // Need wildcards to make up the difference
+                wildcardsNeeded += (requiredCount - availableCount);
             }
         }
 
-        return true;
+        // Check if we have enough wildcards to cover the shortage
+        return wildcardsNeeded <= wildcardCount;
     }
 
     applyFilters() {

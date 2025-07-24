@@ -2,9 +2,10 @@
 
 ## 1.1.0 (2025-07-23)
 
--   Updated word list (+337 words)
--   Collapsible word list subsections. Thanks Dominic (on steam) for the idea!
--   Automatic "last updated" page footer. Thanks [@tampueroc](https://github.com/tampueroc)!
+-   Updated word list (+337 words).
+-   Collapsible word list subsections. Suggested by Dominic on Steam.
+-   Automatic "last updated" page footer. Contribution by [@tampueroc](https://github.com/tampueroc).
+-   Wildcard support - Suggested by Viralsiren on Steam.
 
 ## 1.0.0 (2025-07-16)
 

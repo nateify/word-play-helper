@@ -17,7 +17,6 @@ Changelog: [CHANGELOG.md](CHANGELOG.md)
 -   Unit tests
 -   Dark mode
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
--   Allow for wildcard tiles.
 -   Automatically remove tiles corresponding to selected word?
 -   Trie for efficient word lookup (sorting by alphabetical).
     -   Ideally built offline
@@ -70,3 +69,4 @@ This is still very much a prototype, and I'm not sure what direction to take it.
 
 -   [@Nyveon](https://github.com/Nyveon) - Maintainer
 -   [@tampueroc](https://github.com/tampueroc) - Timestamp updating & documentation
+-   And all the steam users who have given feedback!
