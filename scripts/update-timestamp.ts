@@ -1,31 +1,15 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { execSync } from "child_process";
 
-function updateTimestamp() {
+export function updateTimestamp() {
     const htmlFilePath = join(process.cwd(), "index.html");
-    const wordlistFilePath = join(process.cwd(), "data", "wordsfullb.txt.gz");
 
     try {
-        // Execute git command to get the last commit date for the specific file
-        const gitDateOutput = execSync(
-            `git log -1 --format=%cd --date=iso-strict ${wordlistFilePath}`
-        )
-            .toString()
-            .trim();
-
-        let lastCommitDate: Date;
-        if (gitDateOutput) {
-            lastCommitDate = new Date(gitDateOutput);
-        } else {
-            console.warn(
-                `Warning: Could not get last commit date for ${wordlistFilePath}. Using current date as fallback.`
-            );
-            lastCommitDate = new Date(); // Fallback to current date if no commit history
-        }
+        // Use current date instead of git commit date
+        const currentDate = new Date();
 
         // Format the date as "Month Day, Year" (e.g., "June 7, 2024")
-        const formattedDate = lastCommitDate.toLocaleDateString("en-US", {
+        const formattedDate = currentDate.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -38,7 +22,7 @@ function updateTimestamp() {
             htmlContent = htmlContent.replace(regex, `$1${formattedDate}$3`);
             writeFileSync(htmlFilePath, htmlContent, "utf8");
             console.log(
-                `Successfully updated timestamp in index.html to: ${formattedDate} (from Git commit of ${wordlistFilePath})`
+                `Successfully updated timestamp in index.html to: ${formattedDate}`
             );
         } else {
             console.warn(
@@ -46,13 +30,6 @@ function updateTimestamp() {
             );
         }
     } catch (error) {
-        console.error(
-            `Error getting Git commit date or updating timestamp: ${error.message}`
-        );
-        console.warn(
-            "Please ensure Git is installed and the project is a Git repository."
-        );
+        console.error(`Error updating timestamp: ${error.message}`);
     }
 }
-
-updateTimestamp();

@@ -1,19 +1,23 @@
 # Word Play Helper
 
-Assistant and solver for the game ["Word Play"](https://store.steampowered.com/app/3586660/Word_Play/) by Game Maker's Toolkit.
+Assistant and solver for the game ["Word Play"](https://store.steampowered.com/app/3586660/Word_Play/) by Game Maker's Toolkit. Steam guide [here](https://steamcommunity.com/sharedfiles/filedetails/?id=3527537715).
 
 **Disclaimer**: This project is not affiliated nor endorsed by Game Maker's Toolkit! This is just a personal project for fun.
 
 ## Features
 
--   Input your current letter grid (including bonus tiles).
+-   Input your current letter grid (including bonus tiles). A-Z and wildcards (`*`) are supported.
 -   Find all possible words with your current letters, ordered by length.
 -   Filter results by prefix, suffix, infix.
 
+Changelog: [CHANGELOG.md](CHANGELOG.md)
+
 ### Future Features
 
+-   Unit tests
+-   Dark mode
+-   Keyboard shortcuts
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
--   Allow for wildcard tiles.
 -   Automatically remove tiles corresponding to selected word?
 -   Trie for efficient word lookup (sorting by alphabetical).
     -   Ideally built offline
@@ -38,7 +42,7 @@ Just a vanilla HTML/CSS/JS project. Locally you can use any simple server (i.e V
 
 #### Installing dependencies
 
-- Requirement: Node.js V22.6.0 or newer
+-   Requirement: Node.js V22.6.0 or newer
 
 ```bash
 npm install
@@ -61,3 +65,9 @@ npm run build
 ## Contributing
 
 This is still very much a prototype, and I'm not sure what direction to take it. But if you have any ideas, feel free to leave an issue or a PR!
+
+### Contributors
+
+-   [@Nyveon](https://github.com/Nyveon) - Maintainer
+-   [@tampueroc](https://github.com/tampueroc) - Timestamp updating & documentation
+-   And all the steam users who have given feedback!
