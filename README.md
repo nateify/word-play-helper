@@ -10,6 +10,8 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 -   Find all possible words with your current letters, ordered by length.
 -   Filter results by prefix, suffix, infix.
 
+Changelog: [CHANGELOG.md](CHANGELOG.md)
+
 ### Future Features
 
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
@@ -38,7 +40,7 @@ Just a vanilla HTML/CSS/JS project. Locally you can use any simple server (i.e V
 
 #### Installing dependencies
 
-- Requirement: Node.js V22.6.0 or newer
+-   Requirement: Node.js V22.6.0 or newer
 
 ```bash
 npm install
@@ -61,3 +63,8 @@ npm run build
 ## Contributing
 
 This is still very much a prototype, and I'm not sure what direction to take it. But if you have any ideas, feel free to leave an issue or a PR!
+
+### Contributors
+
+-   [@Nyveon](https://github.com/Nyveon) - Maintainer
+-   [@tampueroc](https://github.com/tampueroc) - Timestamp updating & documentation
