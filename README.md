@@ -12,7 +12,6 @@ Assistant and solver for the game ["Word Play"](https://store.steampowered.com/a
 
 ### Future Features
 
--   Fix: prevent space or other non-tile symbols from being written.
 -   Allow for multi-letter tiles (`ing`, `qu`, etc.).
 -   Allow for wildcard tiles.
 -   Automatically remove tiles corresponding to selected word?
