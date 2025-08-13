@@ -474,7 +474,6 @@ class WordPlayHelper {
         let wordDisplay = '';
 
         if (usedWildcardIndices.length > 0) {
-            wordDisplay += `<span class="wildcard-indicator">*</span>`;
             wordDisplay += [...word].map((char, index) =>
                 usedWildcardIndices.includes(index) ? `<span class="wildcard-letter">${char}</span>` : char
             ).join('');
