@@ -7,6 +7,9 @@ class WordPlayHelper {
         this.currentLetters = []; // Store current letters used
         this.extraSlots = 0; // Track number of extra slots
 
+        // List of interactive elements to prevent focus hijacking
+        this.interactiveElements = ['INPUT', 'BUTTON', 'A', 'SELECT', 'LABEL', 'OPTION'];
+
         this.initializeGrid();
         this.attachEventListeners();
         this.loadWordList();
@@ -157,22 +160,29 @@ class WordPlayHelper {
                     newIndex = index + 1;
                 }
                 break;
+            case "Delete":
+                e.preventDefault();
+                e.target.value = "";
+                return;
             case "Backspace":
-                if (!e.target.value && index > 0) {
-                    // Find the previous visible input
+                e.preventDefault(); // Prevent default browser action
+                e.target.value = ""; // Clear the current input's value
+
+                if (index > 0) {
+                    // Find the previous visible input to focus
                     let prevIndex = index - 1;
                     while (prevIndex >= 0) {
                         const prevInput = document.querySelector(
                             `[data-index="${prevIndex}"]`
                         );
                         if (prevInput && prevInput.style.display !== "none") {
-                            newIndex = prevIndex;
-                            break;
+                            prevInput.focus();
+                            break; // Exit loop once focus is moved
                         }
                         prevIndex--;
                     }
                 }
-                break;
+                return;
             case "Enter":
                 e.preventDefault();
                 this.findWords();
@@ -192,6 +202,55 @@ class WordPlayHelper {
             }
         }
     }
+
+    isInteractiveElement(element) {
+        return this.interactiveElements.includes(element.tagName) ||
+            element.classList.contains('word') ||
+            element.hasAttribute('aria-controls');
+    }
+
+    getFirstVisibleEmptyInput() {
+        const grid = document.querySelector('#letterGrid5x4');
+        if (!grid) return null;
+
+        const inputs = grid.querySelectorAll('input[type="text"]');
+        for (const input of inputs) {
+            const computedStyle = window.getComputedStyle(input);
+            if (computedStyle.visibility !== 'hidden' && input.value === '') {
+                return input;
+            }
+        }
+        return null;
+    }
+
+    handlePageClick(event) {
+        // Check if clicked element or any parent is interactive
+        let element = event.target;
+        while (element) {
+            if (this.isInteractiveElement(element)) {
+                return; // Don't focus if interactive element was clicked
+            }
+            element = element.parentElement;
+        }
+
+        // Focus the first visible empty input
+        const firstInput = this.getFirstVisibleEmptyInput();
+        if (firstInput) {
+            firstInput.focus();
+        }
+    }
+
+    handleGlobalKeyDown(event) {
+        // Handle Escape key to clear the grid
+        if (event.key === 'Escape') {
+            // Prevent clearing if user is typing in a filter input
+            if (event.target.classList.contains('filter-input')) {
+                return;
+            }
+            this.clearGrid();
+        }
+    }
+
 
     attachEventListeners() {
         document.getElementById("findWords").addEventListener("click", () => {
@@ -237,6 +296,9 @@ class WordPlayHelper {
             .addEventListener("click", () => {
                 this.clearFilters();
             });
+
+        document.addEventListener('click', this.handlePageClick.bind(this));
+        document.addEventListener('keydown', this.handleGlobalKeyDown.bind(this));
     }
 
     async loadWordList() {
@@ -368,10 +430,10 @@ class WordPlayHelper {
 
         // Check if word can be formed with available letters and wildcards
         let wildcardsNeeded = 0;
-        
+
         for (const [letter, requiredCount] of Object.entries(wordLetters)) {
             const availableCount = letterCount[letter] || 0;
-            
+
             if (availableCount < requiredCount) {
                 // Need wildcards to make up the difference
                 wildcardsNeeded += (requiredCount - availableCount);
@@ -457,13 +519,13 @@ class WordPlayHelper {
                 <div class="word-group">
                     <h3 class="word-group-header" data-length="${length}" role="button" tabindex="0" aria-expanded="true" aria-controls="words-${length}">
                         <span class="collapse-icon">▼</span>
-                        ${length} letters 
+                        ${length} letters
                         <span class="word-count">${wordsForLength.length}</span>
                     </h3>
                     <div class="words" data-words-for="${length}" id="words-${length}">
                         ${wordsForLength
-                            .map((word) => `<div class="word">${word}</div>`)
-                            .join("")}
+                    .map((word) => `<div class="word">${word}</div>`)
+                    .join("")}
                     </div>
                 </div>
             `;
