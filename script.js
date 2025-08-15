@@ -447,6 +447,32 @@ class WordPlayHelper {
         return { score, usedWildcardIndices };
     }
 
+    getPositionScore(length) {
+        let totalPositionScore = 0;
+        // Loop through each position in the word (1-indexed)
+        for (let i = 1; i <= length; i++) {
+            if (i >= 20) {
+                totalPositionScore += 50;
+            } else if (i === 19) {
+                totalPositionScore += 40;
+            } else if (i === 18) {
+                totalPositionScore += 30;
+            } else if (i >= 15) {
+                totalPositionScore += 25;
+            } else if (i >= 12) {
+                totalPositionScore += 20;
+            } else if (i >= 10) {
+                totalPositionScore += 15;
+            } else if (i >= 8) {
+                totalPositionScore += 10;
+            } else if (i >= 5) {
+                totalPositionScore += 5;
+            }
+        }
+        return totalPositionScore;
+    }
+
+
     applyFilters() {
         if (this.currentResults.length === 0) return;
 
@@ -460,22 +486,18 @@ class WordPlayHelper {
             .getElementById("containsFilter")
             .value.toUpperCase();
 
-        let filteredWords = this.currentResults.filter((word) => {
-            let matches = true;
-
+        let filteredWords = this.currentResults.filter((wordObj) => {
+            let word = wordObj.word;
             if (startsWithFilter && !word.startsWith(startsWithFilter)) {
-                matches = false;
+                return false;
             }
-
             if (endsWithFilter && !word.endsWith(endsWithFilter)) {
-                matches = false;
+                return false;
             }
-
             if (containsFilter && !word.includes(containsFilter)) {
-                matches = false;
+                return false;
             }
-
-            return matches;
+            return true;
         });
 
         this.displayFilteredResults(filteredWords);
@@ -532,10 +554,11 @@ class WordPlayHelper {
 
 
     createWordHtml(wordObj) {
-        const { word, score, usedWildcardIndices, isHighScore } = wordObj;
+        const { word, tileScore, positionScore, combinedScore, usedWildcardIndices, isHighScore } = wordObj;
         let wordDisplay = '';
 
-        if (usedWildcardIndices.length > 0) {
+        if (usedWildcardIndices && usedWildcardIndices.length > 0) {
+            wordDisplay += `<span class="wildcard-indicator">*</span>`;
             wordDisplay += [...word].map((char, index) =>
                 usedWildcardIndices.includes(index) ? `<span class="wildcard-letter">${char}</span>` : char
             ).join('');
@@ -549,9 +572,11 @@ class WordPlayHelper {
         }
 
         return `
-            <div class="${classList.join(' ')}">
+            <div class="${classList.join(' ')}" alt="${combinedScore}">
+                <span class="word-score-tile">${tileScore}</span>
                 <span class="word-text">${wordDisplay}</span>
-                <span class="word-score">${score}</span>
+                <span class="word-score-position">${positionScore}</span>
+                <span class="word-score-combined">${combinedScore}</span>
             </div>
         `;
     }
@@ -615,26 +640,35 @@ class WordPlayHelper {
                     if (word.length >= 4) {
                         const result = this.canFormWord(word, letters);
                         if (result) {
-                            foundWords.push({ word, ...result });
+                            const tileScore = result.score;
+                            const positionScore = this.getPositionScore(word.length);
+                            const combinedScore = tileScore + positionScore;
+                            foundWords.push({
+                                word,
+                                tileScore,
+                                positionScore,
+                                combinedScore,
+                                usedWildcardIndices: result.usedWildcardIndices
+                            });
                         }
                     }
                 });
 
-                // Sort by length (desc), score (desc), then alphabetically
+                // Sort by length (desc), combined score (desc), then alphabetically
                 foundWords.sort((a, b) => {
                     const lengthDiff = b.word.length - a.word.length;
                     if (lengthDiff !== 0) return lengthDiff;
-                    const scoreDiff = b.score - a.score;
+                    const scoreDiff = b.combinedScore - a.combinedScore;
                     if (scoreDiff !== 0) return scoreDiff;
                     return a.word.localeCompare(b.word);
                 });
 
-                // Add high score highlighting
+                // Add high score highlighting based on combined score
                 if (foundWords.length > 0) {
                     const maxLength = foundWords[0].word.length;
-                    const maxScoreAtMaxLength = Math.max(...foundWords.filter(w => w.word.length === maxLength).map(w => w.score));
+                    const maxScoreAtMaxLength = Math.max(...foundWords.filter(w => w.word.length === maxLength).map(w => w.combinedScore));
                     foundWords.forEach(w => {
-                        if (w.word.length < maxLength && w.score > maxScoreAtMaxLength) {
+                        if (w.word.length < maxLength && w.combinedScore > maxScoreAtMaxLength) {
                             w.isHighScore = true;
                         }
                     });

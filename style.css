@@ -455,6 +455,22 @@ main {
     box-shadow: var(--shadow);
 }
 
+.word .word-score-combined {
+    display: inline
+}
+
+.word:hover .word-score-combined {
+    display: none
+}
+
+.word .word-score-position {
+    display: none
+}
+
+.word:hover .word-score-position {
+    display: inline
+}
+
 .wildcard-letter {
     text-decoration: underline;
     text-decoration-thickness: 2px;
