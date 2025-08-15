@@ -471,6 +471,12 @@ main {
     display: inline
 }
 
+.wildcard-letter {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+
 .placeholder {
     text-align: center;
     color: var(--text-secondary);
